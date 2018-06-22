@@ -128,6 +128,7 @@ class ChartController extends Controller
                 $data = [
                     'edit'   => 'charts.edit',
                     'delete' => 'charts.destroy',
+                    'view' => 'chart.data',
                     'entity' => $chart
                 ];
                 $view = View::make('partials.actions', $data);

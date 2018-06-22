@@ -13,13 +13,13 @@
     {{--</li>--}}
     <li class="{{ Request::segment(2) == 'charts' ? 'active' : '' }}">
         <a href="{{route("charts.index")}}">
-            <i class="icon-users"></i>
+            <i class="icon-list"></i>
             <span class="title">{{ __('app.charts') }}</span>
         </a>
     </li>
     <li class="{{ Request::segment(2) == 'transactions' ? 'active' : '' }}">
         <a href="{{route("transactions.index")}}">
-            <i class="icon-users"></i>
+            <i class="icon-list"></i>
             <span class="title">{{ __('app.transactions') }}</span>
         </a>
     </li>

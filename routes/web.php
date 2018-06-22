@@ -27,4 +27,5 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['aut
 
     Route::resource('transactions', 'TransactionController');
     Route::get('transactions-data', 'TransactionController@data')->name("transactions.data");
+    Route::get('charts/data/{id}', 'ChartDataController@index')->name("chart.data");
 });

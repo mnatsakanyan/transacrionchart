@@ -11,3 +11,9 @@
         {{--<span>{{ __('app.delete') }}</span>--}}
     </a>
 @endif
+@if(isset($view) && $view)
+    <a class="btn btn-blue" href="{{ route($view, $entity->id) }}">
+        <i class="icon-list"></i>
+        {{--<span>{{ __('app.delete') }}</span>--}}
+    </a>
+@endif
