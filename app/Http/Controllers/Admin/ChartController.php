@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\DataTables;
 use View;
-
+use Auth;
 class ChartController extends Controller
 {
     /**
@@ -18,7 +18,7 @@ class ChartController extends Controller
     public function index()
     {
         $data = [
-            'charts'=>Chart::paginate(15)
+            'charts'=>Chart::where("user_id",Auth::id())->get()
         ];
         return view("admin.charts.index",$data);
     }
@@ -47,6 +47,7 @@ class ChartController extends Controller
         ]);
         $chart = new Chart();
         $chart->title = $request->title;
+        $chart->user_id = Auth::id();
         $chart->save();
         return redirect("admin/charts")->with("success","Created");
 
@@ -71,9 +72,13 @@ class ChartController extends Controller
      */
     public function edit($id)
     {
+        $chart = Chart::findOrFail($id);
+        if($chart->user_id != Auth::id()){
+            return redirect()->back();
+        }
         try{
             $data = [
-                'entity'=>Chart::findOrFail($id)
+                'entity'=>$chart
             ];
             return view("admin.charts.edit",$data);
         }catch (\Exception $e){
@@ -112,6 +117,9 @@ class ChartController extends Controller
     {
         try{
             $chart = Chart::findOrFail($id);
+            if($chart->user_id != Auth::id()){
+                return redirect()->back();
+            }
            $chart->destroy($id);
             return response()->json(['status'=>"ok","message"=>"Deleted"],200);
         }catch (\Exception $e){
@@ -122,7 +130,7 @@ class ChartController extends Controller
 
     public function data(Datatables $datatables){
         $charts = Chart::query();
-
+        $charts = $charts->where("user_id",Auth::id());
         return $datatables->eloquent($charts)
             ->addColumn('actions', function (Chart $chart) {
                 $data = [

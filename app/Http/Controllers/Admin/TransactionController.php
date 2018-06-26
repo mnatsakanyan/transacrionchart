@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\DataTables;
 use View;
+use Auth;
 class TransactionController extends Controller
 {
     /**
@@ -18,7 +19,7 @@ class TransactionController extends Controller
     public function index()
     {
         $data = [
-            'transactions'=>Transaction::paginate(15),
+            'transactions'=>Transaction::where("user_id",Auth::id())->get(),
 
         ];
 
@@ -33,7 +34,7 @@ class TransactionController extends Controller
     public function create()
     {
         $data = [
-            'charts'=>Chart::all()
+            'charts'=>Chart::where("user_id",Auth::id())->get()
         ];
         return view("admin.transactions.create",$data);
     }
@@ -55,6 +56,7 @@ class TransactionController extends Controller
         ]);
         $transaction = new Transaction();
         $transaction->fill($request->all());
+        $transaction->user_id = Auth::id();
         $transaction->save();
         return redirect("admin/transactions/".$transaction->id."/edit")->with("success","Created");
     }
@@ -80,9 +82,13 @@ class TransactionController extends Controller
     {
 
         try{
+            $transaction = Transaction::findOrFail($id);
+            if($transaction->user_id != Auth::id()){
+                return redirect()->back();
+            }
             $data = [
-                'entity'=>Transaction::findOrFail($id),
-                'charts'=>Chart::all()
+                'entity'=>$transaction,
+                'charts'=>Chart::where("user_id",Auth::id())->get()
             ];
             return view("admin.transactions.edit",$data);
         }catch (\Exception $e){
@@ -100,6 +106,7 @@ class TransactionController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         $this->validate($request,[
             'description'=>"required|max:255",
             'price'=>"required|numeric",
@@ -107,7 +114,11 @@ class TransactionController extends Controller
             'date'=>"required|date",
             'chart_id'=>"required|numeric|min:1",
         ]);
+
         $transaction = Transaction::findOrFail($id);
+        if($transaction->user_id != Auth::id()){
+            return redirect()->back();
+        }
         $transaction->fill($request->all());
         $transaction->update();
         return redirect()->back()->with("success","Updated");
@@ -122,8 +133,12 @@ class TransactionController extends Controller
     public function destroy($id)
     {
         try{
-            $chart = Transaction::findOrFail($id);
-            $chart->destroy($id);
+            
+            $transaction = Transaction::findOrFail($id);
+            if($transaction->user_id != Auth::id()){
+                return redirect()->back();
+            }
+            $transaction->destroy($id);
             return response()->json(['status'=>"ok","message"=>"Deleted"],200);
         }catch (\Exception $e){
 
@@ -132,7 +147,7 @@ class TransactionController extends Controller
 
     public function data(Datatables $datatables){
         $transactions = Transaction::query();
-
+        $transactions = $transactions->where("user_id",Auth::id());
         return $datatables->eloquent($transactions)
             ->addColumn('actions', function (Transaction $transaction) {
                 $data = [

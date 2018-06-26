@@ -43,5 +43,6 @@ return [
     'debit'=>"Debit",
     'date'=>"Date",
     'chart'=>"Chart",
+    'sign_up'=>"Sign Up",
 
 ];

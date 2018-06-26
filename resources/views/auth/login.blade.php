@@ -38,6 +38,7 @@
                     <button class="btn btn-primary btn-block">{{ __('app.login') }}</button>
                 </div>
                 <p class="text-center"><a href="{{ route('password.request') }}">{{ __('app.forgot_your_password') }}</a></p>
+                <p class="text-center"><a href="{{ route('register') }}">{{ __('app.sign_up') }}</a></p>
             </form>
         </div>
     </div>

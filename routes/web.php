@@ -16,9 +16,9 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-Route::get('/register', function () {
-    return redirect("/login");
-});
+// Route::get('/register', function () {
+//     return redirect("/login");
+// });
 //Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get('/', 'DashBoardController@index')->name('dashboard.index');
